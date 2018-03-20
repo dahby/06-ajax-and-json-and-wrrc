@@ -13,7 +13,7 @@ function Article (rawDataObj) {
 Article.all = [];
 
 // COMMENT: Why isn't this method written as an arrow function?
-// PUT YOUR RESPONSE HERE
+// Because this is a prototype function, which is dependant upon a contextual this.
 Article.prototype.toHtml = function() {
   let template = Handlebars.compile($('#article-template').text());
 
@@ -21,7 +21,7 @@ Article.prototype.toHtml = function() {
 
   // COMMENT: What is going on in the line below? What do the question mark and colon represent? How have we seen this same logic represented previously?
   // Not sure? Check the docs!
-  // PUT YOUR RESPONSE HERE
+  // It's a conditional ternary operator. If the initial statement is not true, then use the statement after the colon. It replaces an if/else statement more concisely.
   this.publishStatus = this.publishedOn ? `published ${this.daysAgo} days ago` : '(draft)';
   this.body = marked(this.body);
 
@@ -33,7 +33,7 @@ Article.prototype.toHtml = function() {
 // REVIEW: This function will take the rawData, how ever it is provided, and use it to instantiate all the articles. This code is moved from elsewhere, and encapsulated in a simply-named function for clarity.
 
 // COMMENT: Where is this function called? What does 'rawData' represent now? How is this different from previous labs?
-// PUT YOUR RESPONSE HERE
+// This function is called twice in the fetchAll. Once in the if, and again in the else. rawData now represents the information in localStorage that was retrieved from the JSON file.
 Article.loadAll = articleData => {
   articleData.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)))
 
@@ -44,18 +44,18 @@ Article.loadAll = articleData => {
 Article.fetchAll = () => {
   // REVIEW: What is this 'if' statement checking for? Where was the rawData set to local storage?
   if (localStorage.rawData) {
-
-    Article.loadAll();
+    Article.loadAll(JSON.parse(localStorage.rawData));
+    articleView.initIndexPage()    
 
   } else {
     $.getJSON('/data/hackerIpsum.json')
       .then(
         // SUCCESS CALLBACK
-        function(rawData) {
-          localStorage.setItem('articleData', JSON.stringify(rawData));
-          rawData.forEach(function(article) {
-            Article.all.push(new Article (article));
-          });
+        function(data) {
+          Article.loadAll(data);
+          console.log(data);
+          localStorage.setItem('rawData', JSON.stringify(data));
+          articleView.initIndexPage();
         },
         function(err) {
           console.error(err);
