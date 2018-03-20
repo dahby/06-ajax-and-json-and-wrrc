@@ -53,7 +53,6 @@ Article.fetchAll = () => {
         // SUCCESS CALLBACK
         function(data) {
           Article.loadAll(data);
-          console.log(data);
           localStorage.setItem('rawData', JSON.stringify(data));
           articleView.initIndexPage();
         },
@@ -62,5 +61,6 @@ Article.fetchAll = () => {
         }
       )
   }
+  // When fetchAll runs, check if there is localStorage. If there is, parse that data, then initialize the page. If there isn't localStorage, pull the JSON data, stringify it to put it into local storage, and then initialize the page. We determined the correct sequence, through tiral and error, and by console logging what was happening (thanks, Nicholas).
 }
 
