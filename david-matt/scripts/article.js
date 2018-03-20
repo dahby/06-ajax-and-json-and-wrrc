@@ -52,8 +52,15 @@ Article.fetchAll = () => {
       .then(
         // SUCCESS CALLBACK
         function(rawData) {
-          localStorage.setItem('raw')
+          localStorage.setItem('articleData', JSON.stringify(rawData));
+          rawData.forEach(function(article) {
+            Article.all.push(new Article (article));
+          });
+        },
+        function(err) {
+          console.error(err);
         }
       )
   }
 }
+
